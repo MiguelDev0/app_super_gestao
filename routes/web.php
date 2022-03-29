@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,13 +18,25 @@ use Illuminate\Support\Facades\Route;
     return 'Olá, seja bem-vindo ao curso!';
 });*/
 
-Route::get('/', 'PrincipalController@principal');
+Route::get('/', 'PrincipalController@principal')->name('site.index');
+Route::get('/sobre-nos', 'SobreNosController@sobreNos')->name('site.sobrenos');
+Route::get('/contato', 'ContatoController@contato')->name('site.contato');
+Route::get('/login', function(){return 'Login';})->name('site.login');
 
-Route::get('/sobre-nos', 'SobreNosController@sobreNos');
+Route::prefix('/app')->group(function(){
+    Route::get('/clientes', function(){ return 'Clientes'; })->name('app.clientes');
+    Route::get('/fornecedores', function(){ return 'Fornecedores'; })->name('app.fornecedores');
+    Route::get('/produtos', function(){ return 'Produtos'; })->name('app.produtos');
+});
 
-Route::get('/contato', 'ContatoController@contato');
-//nome, categoria, assunto, mensagem
+Route::get('/rota1', function() {
+    echo 'Rota 1';
+})->name('site.rota1');
 
-Route::get('/contato/{nome}', function(string $nome) {
-    echo 'Estamos aqui: '. $nome;
+Route::get('/rota2', function(){
+    return redirect()->route('site.rota1');
+})->name('site.rota2');
+
+Route::fallback(function() {
+    echo 'A rota acessada não existe. <a href="'.route('site.index').'">Clique aqui</a> para voltar para pagina principal';
 });
